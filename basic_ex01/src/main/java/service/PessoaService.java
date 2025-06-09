@@ -1,6 +1,7 @@
 package service;
 
-import model.Pessoa;
+import entity.Endereco;
+import entity.Pessoa;
 import repository.PessoaRepository;
 
 public class PessoaService {
@@ -10,8 +11,8 @@ public class PessoaService {
         this.pessoaRepository = pessoaRepository;
     }
 
-    public void save(String nome, String dataNascimento) {
-        pessoaRepository.save(new Pessoa(nome, dataNascimento));
+    public void save(Pessoa pessoa) {
+        pessoaRepository.save(pessoa);
     }
 
     public void readAll() {pessoaRepository.readAll();}

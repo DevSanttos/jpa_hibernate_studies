@@ -1,61 +1,58 @@
-
 package repository;
 
+import entity.Endereco;
 import jakarta.persistence.EntityManager;
-import entity.Pessoa;
 
-public class PessoaRepository {
+public class EnderecoRepository {
     private final EntityManager em;
 
-    public PessoaRepository(EntityManager em) {
+    public EnderecoRepository(EntityManager em) {
         this.em = em;
     }
 
-    public void save(Pessoa pessoa) {
+    public void save(Endereco endereco) {
         try {
             em.getTransaction().begin();
-            em.persist(pessoa);
+            em.persist(endereco);
             em.getTransaction().commit();
-        } catch (Exception e) {
+        } catch (Exception ex) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw new RuntimeException("Erro ao salvar pessoa: " + e.getMessage());
         }
     }
 
     public void readAll() {
-        em.createQuery("select p from Pessoa p", Pessoa.class)
+        em.createQuery("select e from Endereco e", Endereco.class)
                 .getResultList()
                 .forEach(System.out::println);
     }
 
-    public Pessoa findByName(String nome) {
-        return em.createQuery("select p from Pessoa p where p.nome = :nome", Pessoa.class)
-                .setParameter("nome", nome)
+    public Endereco findByRuaAndCidade(String rua, String cidade) {
+        return em.createQuery("select e from Endereco e where e.rua = :rua and e.cidade = :cidade", Endereco.class)
+                .setParameter("rua", rua)
+                .setParameter("cidade", cidade)
                 .getSingleResult();
     }
 
-    public Pessoa findById(Long id) {
-        return em.find(Pessoa.class, id);
+    public Endereco findById(Long id) {
+        return em.find(Endereco.class, id);
     }
 
-    public void update(Long id, String nome, String dataNascimento) {
-
+    public void update(Long id, String rua, String cidade) {
         try {
             em.getTransaction().begin();
 
-            Pessoa pessoa = em.find(Pessoa.class, id);
+            Endereco endereco = em.find(Endereco.class, id );
 
-            if (pessoa != null) {
-                pessoa.setNome(nome);
-                pessoa.setDataNascimento(dataNascimento);
+            if (endereco != null) {
+                endereco.setRua(rua);
+                endereco.setCidade(cidade);
             } else {
-                System.out.println("Pessoa não encontrada!");
+                System.out.println("Endereço não encontrado");
                 throw new RuntimeException("Erro ao realizar a consulta por ID.");
             }
             em.getTransaction().commit();
-
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
@@ -66,7 +63,8 @@ public class PessoaRepository {
 
     public void delete(Long id) {
         em.getTransaction().begin();
-        em.remove(em.find(Pessoa.class, id));
+        em.remove(em.find(Endereco.class, id));
         em.getTransaction().commit();
     }
 }
+
